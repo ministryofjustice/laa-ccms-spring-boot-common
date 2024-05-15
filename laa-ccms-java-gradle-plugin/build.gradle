@@ -1,8 +1,8 @@
 plugins {
     id 'gradle-plugin-conventions'
+    id 'java-gradle-plugin'
+    id 'maven-publish'
 }
-
-apply plugin: "maven-publish"
 
 group = 'uk.gov.laa.ccms.java'
 
@@ -23,14 +23,17 @@ publishing {
         }
     }
 
-    publications {
-        gpr(MavenPublication) {
-            from(components.java)
-        }
-    }
-
 }
 
 dependencies {
     implementation 'com.github.ben-manes:gradle-versions-plugin:0.51.0'
+}
+
+gradlePlugin {
+    plugins {
+        simplePlugin {
+            id = 'uk.gov.laa.ccms.springboot.laa-ccms-java-gradle-plugin'
+            implementationClass = 'uk.gov.laa.ccms.gradle.LaaCcmsJavaGradlePlugin'
+        }
+    }
 }

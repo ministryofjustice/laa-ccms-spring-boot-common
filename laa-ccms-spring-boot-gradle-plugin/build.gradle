@@ -1,9 +1,9 @@
 plugins {
+    id 'java-gradle-plugin'
+    id 'maven-publish'
     id 'java'
     id 'groovy'
 }
-
-apply plugin: "maven-publish"
 
 group = 'uk.gov.laa.ccms.springboot'
 
@@ -28,12 +28,6 @@ publishing {
         }
     }
 
-    publications {
-        gpr(MavenPublication) {
-            from(components.java)
-        }
-    }
-
 }
 
 dependencies {
@@ -51,4 +45,13 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+gradlePlugin {
+    plugins {
+        simplePlugin {
+            id = 'uk.gov.laa.ccms.springboot.laa-ccms-spring-boot-gradle-plugin'
+            implementationClass = 'uk.gov.laa.ccms.gradle.springboot.LaaCcmsSpringBootGradlePlugin'
+        }
+    }
 }
