@@ -1,0 +1,36 @@
+plugins {
+    id 'groovy'
+    id 'net.researchgate.release'
+}
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(javaVersion))
+}
+
+repositories {
+    mavenCentral()
+}
+
+release {
+    tagTemplate = '$name-$version'
+}
+
+dependencies {
+    implementation gradleApi()
+    implementation localGroovy()
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}
+
+
+
+tasks.withType(AbstractPublishToMaven).configureEach {
+    doLast {
+        logger.lifecycle("Published Maven artifact: " +
+                "${publication.groupId}:${publication.artifactId}:${publication.version}")
+    }
+}
+
+test {
+    useJUnitPlatform()
+}

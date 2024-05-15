@@ -1,0 +1,27 @@
+plugins {
+    id 'java-platform'
+}
+
+javaPlatform {
+    allowDependencies()
+}
+
+ext {
+    springBootVersion = '3.2.5'
+}
+
+
+rootProject.project(':laa-ccms-spring-boot-starters').subprojects.each {
+    evaluationDependsOn it.path
+}
+
+dependencies {
+
+    api platform("org.springframework.boot:spring-boot-dependencies:$springBootVersion")
+
+    constraints {
+        project.project(':laa-ccms-spring-boot-starters').subprojects.each {
+            api group: it.group, name: it.name, version: it.version
+        }
+    }
+}

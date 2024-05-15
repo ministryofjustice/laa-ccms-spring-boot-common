@@ -1,0 +1,54 @@
+plugins {
+    id 'java'
+    id 'groovy'
+}
+
+apply plugin: "maven-publish"
+
+group = 'uk.gov.laa.ccms.springboot'
+
+repositories {
+    gradlePluginPortal()
+}
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(javaVersion))
+}
+
+publishing {
+
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url "https://maven.pkg.github.com/ministryofjustice/${project.name}"
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+
+    publications {
+        gpr(MavenPublication) {
+            from(components.java)
+        }
+    }
+
+}
+
+dependencies {
+    implementation gradleApi()
+    implementation localGroovy()
+
+    // Make sure we're using the same version of the Java plugin that we're adding into the starters
+    implementation project(':laa-ccms-java-gradle-plugin')
+    implementation "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
+    implementation "io.spring.gradle:dependency-management-plugin:$springBootDependencyManagementVersion"
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}
+
+test {
+    useJUnitPlatform()
+}

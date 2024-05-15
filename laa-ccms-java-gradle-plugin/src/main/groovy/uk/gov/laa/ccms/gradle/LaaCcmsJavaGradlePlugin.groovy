@@ -1,0 +1,90 @@
+package uk.gov.laa.ccms.gradle
+
+import com.github.benmanes.gradle.versions.VersionsPlugin
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.plugins.quality.CheckstylePlugin
+import org.gradle.api.tasks.testing.Test
+import org.gradle.jvm.toolchain.JavaLanguageVersion
+import org.gradle.testing.jacoco.plugins.JacocoPlugin
+
+class LaaCcmsJavaGradlePlugin implements Plugin<Project> {
+
+    private static final String JAVA_VERSION = "21"
+    private static final String CHECKSTYLE_VERSION = "10.12.4"
+
+    @Override
+    void apply(Project target) {
+
+        target.pluginManager.apply JavaPlugin
+        target.pluginManager.apply JacocoPlugin
+        target.pluginManager.apply VersionsPlugin
+        target.pluginManager.apply CheckstylePlugin
+
+        target.java {
+            toolchain.languageVersion.set(JavaLanguageVersion.of(JAVA_VERSION))
+        }
+
+        target.tasks.withType(Test).configureEach {
+            testLogging.showStandardStreams = true
+            testLogging.showStackTraces = true
+        }
+
+        target.dependencyUpdates {
+            def isReleaseVersion = { String version ->
+                def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { kw -> version.toUpperCase().contains(kw) }
+                def regex = /^[0-9,.v-]+(-r)?$/
+                return stableKeyword || version ==~ regex
+            }
+
+            rejectVersionIf {
+                !isReleaseVersion(it.candidate.version) && isReleaseVersion(it.currentVersion)
+            }
+
+            gradleReleaseChannel = "current"
+        }
+
+        target.jacocoTestReport {
+            sourceDirectories.from target.files('build/generated/sources/annotationProcessor/java/main')
+
+            dependsOn target.tasks['test']
+        }
+
+        target.jacocoTestCoverageVerification {
+
+            violationRules {
+                rule {
+                    limit {
+                        minimum = 0.80
+                    }
+                }
+            }
+
+            dependsOn target.tasks['test']
+        }
+
+        target.checkstyle {
+            maxWarnings = 0
+            toolVersion = CHECKSTYLE_VERSION
+            sourceSets = [sourceSets.main]
+            showViolations = true
+        }
+
+        //used for deploying snapshot packages
+        target.task("updateSnapshotVersion")
+            .doLast(task -> {
+                    def gitHash = "git rev-parse --short HEAD".execute().text.trim()
+                    def propertiesFile = file('gradle.properties')
+                    def properties = new Properties()
+                    properties.load(new FileInputStream(propertiesFile))
+
+                    def currentVersion = properties.getProperty('version')
+                    def newVersion = currentVersion.replace('-SNAPSHOT', "-${gitHash}-SNAPSHOT")
+                    properties.setProperty('version', newVersion)
+
+                    properties.store(propertiesFile.newWriter(), null)
+                }
+            )
+    }
+}
