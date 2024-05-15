@@ -8,3 +8,18 @@ subprojects {
         it.jvmArgs = ["--add-opens=java.base/java.lang=ALL-UNNAMED"]
     }
 }
+
+task updateSnapshotVersion {
+    doLast {
+        def gitHash = "git rev-parse --short HEAD".execute().text.trim()
+        def propertiesFile = file('gradle.properties')
+        def properties = new Properties()
+        properties.load(new FileInputStream(propertiesFile))
+
+        def currentVersion = properties.getProperty('version')
+        def newVersion = currentVersion.replace('-SNAPSHOT', "-${gitHash}-SNAPSHOT")
+        properties.setProperty('version', newVersion)
+
+        properties.store(propertiesFile.newWriter(), null)
+    }
+}
