@@ -32,7 +32,7 @@ dependencies {
 gradlePlugin {
     plugins {
         simplePlugin {
-            id = 'uk.gov.laa.ccms.springboot.laa-ccms-java-gradle-plugin'
+            id = 'uk.gov.laa.ccms.java.laa-ccms-java-gradle-plugin'
             implementationClass = 'uk.gov.laa.ccms.gradle.LaaCcmsJavaGradlePlugin'
         }
     }
