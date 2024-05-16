@@ -2,6 +2,8 @@ plugins {
     id 'java-platform'
 }
 
+group = 'uk.gov.laa.ccms.springboot'
+
 javaPlatform {
     allowDependencies()
 }
@@ -13,6 +15,12 @@ ext {
 
 rootProject.project(':laa-ccms-spring-boot-starters').subprojects.each {
     evaluationDependsOn it.path
+}
+
+publishing.publications {
+    springBootDependencies(MavenPublication) {
+        from(components.javaPlatform)
+    }
 }
 
 dependencies {

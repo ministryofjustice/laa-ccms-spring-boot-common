@@ -71,6 +71,13 @@ class LaaCcmsJavaGradlePlugin implements Plugin<Project> {
             showViolations = true
         }
 
+        target.tasks.withType(AbstractPublishToMaven) {
+            doLast {
+                logger.lifecycle("Published Maven artifact: " +
+                        "${publication.groupId}:${publication.artifactId}:${publication.version}")
+            }
+        }
+
         //used for deploying snapshot packages
         target.task("updateSnapshotVersion")
             .doLast(task -> {

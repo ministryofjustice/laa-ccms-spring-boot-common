@@ -3,6 +3,28 @@ subprojects {
     tasks.withType(Test).configureEach {
         it.jvmArgs = ["--add-opens=java.base/java.lang=ALL-UNNAMED"]
     }
+
+    apply plugin: 'maven-publish'
+
+    publishing.repositories {
+        maven {
+            name = "GitHubPackages"
+            url "https://maven.pkg.github.com/ministryofjustice/${rootProject.name}"
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+
+    tasks.withType(AbstractPublishToMaven).tap {
+        configureEach {
+            doLast {
+                logger.lifecycle("Published Maven artifact: " +
+                        "${publication.groupId}:${publication.artifactId}:${publication.version}")
+            }
+        }
+    }
 }
 
 task updateSnapshotVersion {

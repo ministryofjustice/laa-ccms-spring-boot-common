@@ -22,15 +22,6 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
 
-
-
-tasks.withType(AbstractPublishToMaven).configureEach {
-    doLast {
-        logger.lifecycle("Published Maven artifact: " +
-                "${publication.groupId}:${publication.artifactId}:${publication.version}")
-    }
-}
-
 test {
     useJUnitPlatform()
 }
