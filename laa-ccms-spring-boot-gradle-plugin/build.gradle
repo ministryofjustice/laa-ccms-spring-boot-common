@@ -40,3 +40,12 @@ gradlePlugin {
         }
     }
 }
+
+jar {
+    manifest {
+        attributes(
+                "Implementation-Title": "LAA CCMS Spring Boot Conventions Plugin",
+                "Implementation-Version": project.version
+        )
+    }
+}
