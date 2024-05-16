@@ -8,8 +8,8 @@ import uk.gov.laa.ccms.gradle.LaaCcmsJavaGradlePlugin
 
 class LaaCcmsSpringBootGradlePlugin implements Plugin<Project> {
 
-  public static final String BOM_COORDINATES = 'uk.gov.laa.ccms.springboot:laa-ccms-spring-boot-dependencies:' +
-    LaaCcmsSpringBootGradlePlugin.class.getPackage().implementationVersion;
+  public static final String BOM_COORDINATES = "uk.gov.laa.ccms.springboot:laa-ccms-spring-boot-dependencies:" +
+          LaaCcmsSpringBootGradlePlugin.class.getPackage().getImplementationVersion()
 
   @Override
   void apply(Project target) {
