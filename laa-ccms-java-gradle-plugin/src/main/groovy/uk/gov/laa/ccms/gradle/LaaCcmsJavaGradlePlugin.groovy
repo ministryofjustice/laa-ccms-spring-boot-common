@@ -5,6 +5,8 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.quality.CheckstylePlugin
+import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
+import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
 import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.testing.jacoco.plugins.JacocoPlugin
@@ -21,6 +23,7 @@ class LaaCcmsJavaGradlePlugin implements Plugin<Project> {
         target.pluginManager.apply JacocoPlugin
         target.pluginManager.apply VersionsPlugin
         target.pluginManager.apply CheckstylePlugin
+        target.pluginManager.apply MavenPublishPlugin
 
         target.java {
             toolchain.languageVersion.set(JavaLanguageVersion.of(JAVA_VERSION))
@@ -71,7 +74,7 @@ class LaaCcmsJavaGradlePlugin implements Plugin<Project> {
             showViolations = true
         }
 
-        target.tasks.withType(AbstractPublishToMaven) {
+        target.tasks.withType(AbstractPublishToMaven).configureEach {
             doLast {
                 logger.lifecycle("Published Maven artifact: " +
                         "${publication.groupId}:${publication.artifactId}:${publication.version}")
@@ -79,8 +82,8 @@ class LaaCcmsJavaGradlePlugin implements Plugin<Project> {
         }
 
         //used for deploying snapshot packages
-        target.task("updateSnapshotVersion")
-            .doLast(task -> {
+        target.tasks.register("updateSnapshotVersion") {
+            doLast(task -> {
                     def gitHash = "git rev-parse --short HEAD".execute().text.trim()
                     def propertiesFile = file('gradle.properties')
                     def properties = new Properties()
@@ -89,9 +92,9 @@ class LaaCcmsJavaGradlePlugin implements Plugin<Project> {
                     def currentVersion = properties.getProperty('version')
                     def newVersion = currentVersion.replace('-SNAPSHOT', "-${gitHash}-SNAPSHOT")
                     properties.setProperty('version', newVersion)
-
                     properties.store(propertiesFile.newWriter(), null)
                 }
             )
+        }
     }
 }
