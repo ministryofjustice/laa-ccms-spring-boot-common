@@ -74,7 +74,7 @@ class LaaCcmsJavaGradlePlugin implements Plugin<Project> {
         target.checkstyle {
             maxWarnings = 0
             toolVersion = CHECKSTYLE_VERSION
-            sourceSets = [target.sourceSets.main]
+            sourceSets = [sourceSets.main]
             showViolations = true
         }
 
@@ -90,10 +90,10 @@ class LaaCcmsJavaGradlePlugin implements Plugin<Project> {
         def propertyKey = target.findProperty('project.ext.gitPackageKey')
 
         if (envUsername && envKey) {
-            gitHubPackagesUser = envUsername
+            gitHubPackagesUsername = envUsername
             gitHubPackagesPassword = envKey
         } else if (propertyUsername && propertyKey) {
-            gitHubPackagesUser = propertyUsername
+            gitHubPackagesUsername = propertyUsername
             gitHubPackagesPassword = propertyKey
         }
         else {
