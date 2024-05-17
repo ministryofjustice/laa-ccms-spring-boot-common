@@ -134,7 +134,7 @@ class LaaCcmsJavaGradlePlugin implements Plugin<Project> {
         target.publishing {
             repositories {
                 maven {
-                    url "https://maven.pkg.github.com/ministryofjustice/${target.rootProject}"
+                    url "https://maven.pkg.github.com/ministryofjustice/${target.rootProject.name}"
                     credentials {
                         username = target.gitHubPackagesUsername
                         password = target.gitHubPackagesPassword
