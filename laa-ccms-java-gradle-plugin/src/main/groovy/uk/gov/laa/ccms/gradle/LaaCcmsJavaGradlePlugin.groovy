@@ -155,8 +155,9 @@ class LaaCcmsJavaGradlePlugin implements Plugin<Project> {
         }
 
         // Used for deploying snapshot packages
-        target.rootProject.tasks.register("updateSnapshotVersion") {
-            doLast(task -> {
+        if (target.rootProject.tasks.findByName('updateSnapshotVersion') == null) {
+            target.rootProject.tasks.register("updateSnapshotVersion") {
+                doLast(task -> {
                     def gitHash = "git rev-parse --short HEAD".execute().text.trim()
                     def propertiesFile = target.rootProject.file('gradle.properties')
                     def properties = new Properties()
@@ -167,7 +168,8 @@ class LaaCcmsJavaGradlePlugin implements Plugin<Project> {
                     properties.setProperty('version', newVersion)
                     properties.store(propertiesFile.newWriter(), null)
                 }
-            )
+                )
+            }
         }
     }
 }
