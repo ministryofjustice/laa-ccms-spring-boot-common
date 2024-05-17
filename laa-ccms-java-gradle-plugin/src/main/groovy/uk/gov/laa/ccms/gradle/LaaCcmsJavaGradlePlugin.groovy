@@ -154,11 +154,11 @@ class LaaCcmsJavaGradlePlugin implements Plugin<Project> {
             tagTemplate = '$name-$version'
         }
 
-        //used for deploying snapshot packages
-        target.tasks.register("updateSnapshotVersion") {
+        // Used for deploying snapshot packages
+        target.rootProject.tasks.register("updateSnapshotVersion") {
             doLast(task -> {
                     def gitHash = "git rev-parse --short HEAD".execute().text.trim()
-                    def propertiesFile = file('gradle.properties')
+                    def propertiesFile = target.rootProject.file('gradle.properties')
                     def properties = new Properties()
                     properties.load(new FileInputStream(propertiesFile))
 
