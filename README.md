@@ -3,14 +3,14 @@
 Provides 2 plugins that configure plugins and apply common build logic,
 and a set of starters that provide individual pieces of common functionality.
 
-## Plugins
+## Available Plugins
 
 ### `laa-ccms-java-gradle-plugin` for Java Projects
   - apply [Java](https://docs.gradle.org/current/userguide/java_plugin.html) plugin, and configure a Java toolchain.
   - apply [Jacoco](https://docs.gradle.org/current/userguide/jacoco_plugin.html) plugin, and configure sensible defaults.
   - apply [Versions](https://github.com/ben-manes/gradle-versions-plugin) plugin, and configure the recommended versioning strategy.
   - apply [Checkstyle](https://docs.gradle.org/current/userguide/checkstyle_plugin.html) plugin, and configure sensible defaults.
-  - apply [Maven Publish](https://docs.gradle.org/current/userguide/publishing_maven.html) plugin
+  - apply [Maven Publish](https://docs.gradle.org/current/userguide/publishing_maven.html) plugin, and configure LAA CCMS repositories and credential resolution for local development and pipelines.
   - apply [Gradle Release](https://github.com/researchgate/gradle-release) plugin
 
 ```groovy
@@ -30,7 +30,63 @@ plugins {
 }
 ```
 
-## Starters
+## Using the Plugins
+
+For the plugins to work in your project, you will need to configure the plugin repository and provide your GitHub credentials in your local `gradle.properties` file.
+
+### Define the Plugin repository
+
+To configure the plugin repository, add this **to the top** your project's `settings.gradle`:
+
+```groovy
+pluginManagement {
+    repositories {
+        maven {
+            name = "gitHubPackages"
+            url uri('https://maven.pkg.github.com/ministryofjustice/laa-ccms-spring-boot-common')
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")?.trim() ? System.getenv("GITHUB_ACTOR") : settings.ext.find('project.ext.gitPackageUser')
+                password = System.getenv("GITHUB_TOKEN")?.trim() ? System.getenv("GITHUB_TOKEN") : settings.ext.find('project.ext.gitPackageKey')
+            }
+        }
+        maven { url "https://plugins.gradle.org/m2/" }
+        gradlePluginPortal()
+    }
+}
+```
+
+This tells Gradle where to search for plugins. The plugins in this repository are published to GitHub packages, under the same namespace. For further information see [Working with the Gradle registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-gradle-registry).
+
+### Provide your repository credentials
+
+Your credentials to the GitHub Packages repository need to be defined in your local `gradle.properties` file, which you can find in your home directory, e.g. `~/.gradle/gradle.properties`.
+
+Please add the following parameters:
+
+```yaml
+project.ext.gitPackageUser = <your GitHub username>
+project.ext.gitPackageKey = <your GitHub access token>
+```
+
+### Applying the Plugin
+
+In your (root) `build.gradle`, add the plugin dependency via the Gradle Plugin DSL:
+
+```groovy
+plugins {
+    id 'uk.gov.laa.ccms.springboot.laa-ccms-spring-boot-gradle-plugin' version '<LATEST>' apply false
+}
+```
+
+Where `<LATEST>` is the latest **release** version found [here](https://github.com/orgs/ministryofjustice/packages?repo_name=laa-ccms-spring-boot-common).
+
+If this is not a multi-project build, you can remove `apply false` to apply the plugin. Otherwise, in your subprojects where the plugin is required you will need to apply the plugin:
+
+```groovy
+apply plugin: 'uk.gov.laa.ccms.springboot.laa-ccms-spring-boot-gradle-plugin'
+```
+
+## Available Starters
 
 - _**[TODO]**_ Exception Handling
 - _**[TODO]**_ Entity Convertors
