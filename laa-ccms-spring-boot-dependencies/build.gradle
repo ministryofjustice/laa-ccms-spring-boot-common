@@ -8,11 +8,6 @@ javaPlatform {
     allowDependencies()
 }
 
-ext {
-    springBootVersion = '3.2.5'
-}
-
-
 rootProject.project(':laa-ccms-spring-boot-starters').subprojects.each {
     evaluationDependsOn it.path
 }

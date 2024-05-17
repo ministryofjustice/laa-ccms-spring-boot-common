@@ -6,10 +6,6 @@ java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(javaVersion))
 }
 
-test {
-    useJUnitPlatform()
-}
-
 dependencies {
     implementation platform(project(':laa-ccms-spring-boot-dependencies'))
     annotationProcessor platform(project(':laa-ccms-spring-boot-dependencies'))
@@ -19,4 +15,8 @@ dependencies {
     annotationProcessor "org.springframework.boot:spring-boot-autoconfigure-processor"
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+test {
+    useJUnitPlatform()
 }

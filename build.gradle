@@ -17,6 +17,12 @@ subprojects {
         }
     }
 
+    apply plugin: 'net.researchgate.release'
+
+    release {
+        tagTemplate = '$name-$version'
+    }
+
     tasks.withType(AbstractPublishToMaven).tap {
         configureEach {
             doLast {

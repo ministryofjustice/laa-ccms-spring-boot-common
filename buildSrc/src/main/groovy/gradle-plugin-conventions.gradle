@@ -1,18 +1,9 @@
 plugins {
     id 'groovy'
-    id 'net.researchgate.release'
 }
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(javaVersion))
-}
-
-repositories {
-    mavenCentral()
-}
-
-release {
-    tagTemplate = '$name-$version'
 }
 
 dependencies {

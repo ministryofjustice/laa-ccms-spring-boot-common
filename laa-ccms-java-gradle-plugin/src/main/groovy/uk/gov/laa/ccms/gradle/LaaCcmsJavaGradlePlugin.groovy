@@ -1,6 +1,7 @@
 package uk.gov.laa.ccms.gradle
 
 import com.github.benmanes.gradle.versions.VersionsPlugin
+import net.researchgate.release.ReleasePlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
@@ -21,6 +22,7 @@ class LaaCcmsJavaGradlePlugin implements Plugin<Project> {
 
         target.pluginManager.apply JavaPlugin
         target.pluginManager.apply JacocoPlugin
+        target.pluginManager.apply ReleasePlugin
         target.pluginManager.apply VersionsPlugin
         target.pluginManager.apply CheckstylePlugin
         target.pluginManager.apply MavenPublishPlugin
@@ -33,6 +35,8 @@ class LaaCcmsJavaGradlePlugin implements Plugin<Project> {
             testLogging.showStandardStreams = true
             testLogging.showStackTraces = true
         }
+
+        /** Code checking **/
 
         target.dependencyUpdates {
             def isReleaseVersion = { String version ->
@@ -70,8 +74,73 @@ class LaaCcmsJavaGradlePlugin implements Plugin<Project> {
         target.checkstyle {
             maxWarnings = 0
             toolVersion = CHECKSTYLE_VERSION
-            sourceSets = [sourceSets.main]
+            sourceSets = [target.sourceSets.main]
             showViolations = true
+        }
+
+        /** Package repositories **/
+
+        def gitHubPackagesUsername
+        def gitHubPackagesPassword
+
+        def envUsername = System.getenv("GITHUB_ACTOR")?.trim()
+        def envKey = System.getenv("GITHUB_TOKEN")?.trim()
+
+        def propertyUsername = target.findProperty('project.ext.gitPackageUser')
+        def propertyKey = target.findProperty('project.ext.gitPackageKey')
+
+        if (envUsername && envKey) {
+            gitHubPackagesUser = envUsername
+            gitHubPackagesPassword = envKey
+        } else if (propertyUsername && propertyKey) {
+            gitHubPackagesUser = propertyUsername
+            gitHubPackagesPassword = propertyKey
+        }
+        else {
+            target.logger.warn("Unable to find GitHub packages credentials. " +
+                    "Please set 'project.ext.gitPackageUser' / 'project.ext.gitPackageKey' " +
+                    "in your gradle.properties file " +
+                    "or 'GITHUB_ACTOR' / 'GITHUB_TOKEN' environment variables.")
+        }
+
+        target.project.ext."gitHubPackagesUsername" = gitHubPackagesUsername
+        target.project.ext."gitHubPackagesPassword" = gitHubPackagesPassword
+
+        target.repositories {
+            mavenCentral()
+
+            // Latest version of saml requires this
+            maven { url "https://build.shibboleth.net/nexus/content/repositories/releases/" }
+
+            // Configure GitHub Packages repositories
+            def githubRepoConfig = { repoUrl ->
+                maven {
+                    url repoUrl
+                    credentials {
+                        username = target.gitHubPackagesUsername
+                        password = target.gitHubPackagesPassword
+                    }
+                }
+            }
+
+            githubRepoConfig('https://maven.pkg.github.com/ministryofjustice/laa-ccms-data-api')
+            githubRepoConfig('https://maven.pkg.github.com/ministryofjustice/laa-ccms-caab-api')
+            githubRepoConfig('https://maven.pkg.github.com/ministryofjustice/laa-ccms-soa-gateway-api')
+            githubRepoConfig('https://maven.pkg.github.com/ministryofjustice/laa-ccms-spring-boot-common')
+        }
+
+        /** Publishing and releases **/
+
+        target.publishing {
+            repositories {
+                maven {
+                    url "https://maven.pkg.github.com/ministryofjustice/${target.rootProject}"
+                    credentials {
+                        username = target.gitHubPackagesUsername
+                        password = target.gitHubPackagesPassword
+                    }
+                }
+            }
         }
 
         target.tasks.withType(AbstractPublishToMaven).configureEach {
@@ -79,6 +148,10 @@ class LaaCcmsJavaGradlePlugin implements Plugin<Project> {
                 logger.lifecycle("Published Maven artifact: " +
                         "${publication.groupId}:${publication.artifactId}:${publication.version}")
             }
+        }
+
+        target.release {
+            tagTemplate = '$name-$version'
         }
 
         //used for deploying snapshot packages
