@@ -62,8 +62,8 @@ class LaaCcmsJavaGradlePlugin implements Plugin<Project> {
                 useJUnitPlatform()
                 description = "Run integration tests"
                 group = "verification"
-                testClassesDirs = sourceSets.integrationTest.output.classesDirs
-                classpath = sourceSets.integrationTest.runtimeClasspath
+                testClassesDirs = target.sourceSets.integrationTest.output.classesDirs
+                classpath = target.sourceSets.integrationTest.runtimeClasspath
             }
         }
 
