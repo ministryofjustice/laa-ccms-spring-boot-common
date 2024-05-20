@@ -31,9 +31,40 @@ class LaaCcmsJavaGradlePlugin implements Plugin<Project> {
             toolchain.languageVersion.set(JavaLanguageVersion.of(JAVA_VERSION))
         }
 
+        /** Test Tasks **/
+
+        // Additional logging
         target.tasks.withType(Test).configureEach {
             testLogging.showStandardStreams = true
             testLogging.showStackTraces = true
+        }
+
+        // Integration tests
+        if (target.tasks.findByName('integrationTest') == null) {
+            target.sourceSets {
+                integrationTest {
+                    java {
+                        compileClasspath += main.output + test.output
+                        runtimeClasspath += main.output + test.output
+                    }
+                }
+            }
+
+            target.configurations {
+                compileOnly {
+                    extendsFrom annotationProcessor
+                }
+                integrationTestImplementation.extendsFrom(testImplementation)
+                integrationTestRuntimeOnly.extendsFrom(testRuntimeOnly)
+            }
+
+            target.tasks.register('integrationTest', Test) {
+                useJUnitPlatform()
+                description = "Run integration tests"
+                group = "verification"
+                testClassesDirs = sourceSets.integrationTest.output.classesDirs
+                classpath = sourceSets.integrationTest.runtimeClasspath
+            }
         }
 
         /** Code checking **/
@@ -131,10 +162,13 @@ class LaaCcmsJavaGradlePlugin implements Plugin<Project> {
 
         /** Publishing and releases **/
 
+        // Allow override through gradle property, in case project name ≠ repository name
+        def repositoryName = target.findProperty('repositoryName')?.trim() ?: target.rootProject.name
+
         target.publishing {
             repositories {
                 maven {
-                    url "https://maven.pkg.github.com/ministryofjustice/${target.rootProject.name}"
+                    url "https://maven.pkg.github.com/ministryofjustice/${repositoryName}"
                     credentials {
                         username = target.gitHubPackagesUsername
                         password = target.gitHubPackagesPassword
