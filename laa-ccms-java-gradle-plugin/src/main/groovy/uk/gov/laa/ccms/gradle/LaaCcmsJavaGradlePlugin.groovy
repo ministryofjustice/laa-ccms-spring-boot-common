@@ -128,7 +128,7 @@ class LaaCcmsJavaGradlePlugin implements Plugin<Project> {
             gitHubPackagesPassword = propertyKey
         }
         else {
-            target.logger.warn("Unable to find GitHub packages credentials. " +
+            target.logger.info("Unable to find GitHub packages credentials. " +
                     "Please set 'project.ext.gitPackageUser' / 'project.ext.gitPackageKey' " +
                     "in your gradle.properties file " +
                     "or 'GITHUB_ACTOR' / 'GITHUB_TOKEN' environment variables.")
@@ -139,25 +139,13 @@ class LaaCcmsJavaGradlePlugin implements Plugin<Project> {
 
         target.repositories {
             mavenCentral()
-
-            // Latest version of saml requires this
-            maven { url "https://build.shibboleth.net/nexus/content/repositories/releases/" }
-
-            // Configure GitHub Packages repositories
-            def githubRepoConfig = { repoUrl ->
-                maven {
-                    url repoUrl
-                    credentials {
-                        username = target.gitHubPackagesUsername
-                        password = target.gitHubPackagesPassword
-                    }
+            maven {
+                url 'https://maven.pkg.github.com/ministryofjustice/laa-ccms-spring-boot-common'
+                credentials {
+                    username = target.gitHubPackagesUsername
+                    password = target.gitHubPackagesPassword
                 }
             }
-
-            githubRepoConfig('https://maven.pkg.github.com/ministryofjustice/laa-ccms-data-api')
-            githubRepoConfig('https://maven.pkg.github.com/ministryofjustice/laa-ccms-caab-api')
-            githubRepoConfig('https://maven.pkg.github.com/ministryofjustice/laa-ccms-soa-gateway-api')
-            githubRepoConfig('https://maven.pkg.github.com/ministryofjustice/laa-ccms-spring-boot-common')
         }
 
         /** Publishing and releases **/
