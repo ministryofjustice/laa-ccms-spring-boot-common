@@ -6,12 +6,17 @@ and a set of starters that provide individual pieces of common functionality.
 ## Available Plugins
 
 ### `laa-ccms-java-gradle-plugin` for Java Projects
+
+A general purpose Java plugin for LAA CCMS projects.
+
   - apply [Java](https://docs.gradle.org/current/userguide/java_plugin.html) plugin, and configure a Java toolchain.
   - apply [Jacoco](https://docs.gradle.org/current/userguide/jacoco_plugin.html) plugin, and configure sensible defaults.
   - apply [Versions](https://github.com/ben-manes/gradle-versions-plugin) plugin, and configure the recommended versioning strategy.
   - apply [Checkstyle](https://docs.gradle.org/current/userguide/checkstyle_plugin.html) plugin, and configure sensible defaults.
-  - apply [Maven Publish](https://docs.gradle.org/current/userguide/publishing_maven.html) plugin, and configure LAA CCMS repositories and credential resolution for local development and pipelines.
-  - apply [Gradle Release](https://github.com/researchgate/gradle-release) plugin
+  - apply [Maven Publish](https://docs.gradle.org/current/userguide/publishing_maven.html) plugin, and configure LAA CCMS repositories and credential resolution for local development and pipelines. For publishing, the repository name can be overridden by setting the `repositoryName` property in your `gradle.properties`. This is helpful when your repository name is different from your project name.
+  - apply [Gradle Release](https://github.com/researchgate/gradle-release) plugin, and define a release tag format.
+
+In addition to this an `integrationTest` gradle task will be provided, that will run tests under `src/main/integrationTest`. All test tasks will also output increased logging (standard streams and stack traces) to aid with debugging.
 
 ```groovy
 plugins {
@@ -20,7 +25,10 @@ plugins {
 ```
 
 ### `laa-ccms-spring-boot-gradle-plugin` for Java + Spring Boot projects
-  - apply the LAA CCMS Java Gradle plugin
+
+A SpringBoot convention plugin for LAA CCMS projects. All of the above + SpringBoot dependency version recommendations to simplify dependency management and avoid compatibility issues within a project.
+
+  - apply the [LAA CCMS Java Gradle](#laa-ccms-java-gradle-plugin-for-java-projects) plugin
   - apply the [SpringBoot](https://plugins.gradle.org/plugin/org.springframework.boot) plugin
   - apply the [Dependency Management](https://plugins.gradle.org/plugin/io.spring.dependency-management) plugin, and configure dependency management for the common LAA CCMS Spring Boot components (starters & libraries)
 
@@ -45,8 +53,8 @@ pluginManagement {
             name = "gitHubPackages"
             url uri('https://maven.pkg.github.com/ministryofjustice/laa-ccms-spring-boot-common')
             credentials {
-                username = System.getenv("GITHUB_ACTOR")?.trim() ? System.getenv("GITHUB_ACTOR") : settings.ext.find('project.ext.gitPackageUser')
-                password = System.getenv("GITHUB_TOKEN")?.trim() ? System.getenv("GITHUB_TOKEN") : settings.ext.find('project.ext.gitPackageKey')
+                username = System.getenv("GITHUB_ACTOR")?.trim() ?: settings.ext.find('project.ext.gitPackageUser')
+                password = System.getenv("GITHUB_TOKEN")?.trim() ?: settings.ext.find('project.ext.gitPackageKey')
             }
         }
         maven { url "https://plugins.gradle.org/m2/" }
@@ -70,7 +78,7 @@ project.ext.gitPackageKey = <your GitHub access token>
 
 ### Applying the Plugin
 
-In your (root) `build.gradle`, add the plugin dependency via the Gradle Plugin DSL:
+In your (root) `build.gradle`, add the plugin dependency via the Gradle Plugin DSL, e.g:
 
 ```groovy
 plugins {
@@ -80,7 +88,7 @@ plugins {
 
 Where `<LATEST>` is the latest **release** version found [here](https://github.com/orgs/ministryofjustice/packages?repo_name=laa-ccms-spring-boot-common).
 
-If this is not a multi-project build, you can remove `apply false` to apply the plugin. Otherwise, in your subprojects where the plugin is required you will need to apply the plugin:
+If this is not a multi-project build, you can remove `apply false` to apply the plugin at the root level. Otherwise, in your subprojects where the plugin is required you will need to apply the plugin:
 
 ```groovy
 apply plugin: 'uk.gov.laa.ccms.springboot.laa-ccms-spring-boot-gradle-plugin'
@@ -89,5 +97,5 @@ apply plugin: 'uk.gov.laa.ccms.springboot.laa-ccms-spring-boot-gradle-plugin'
 ## Available Starters
 
 - _**[TODO]**_ Exception Handling
-- _**[TODO]**_ Entity Convertors
+- _**[TODO]**_ Entity Converters
 - _**[TODO]**_ Auth
