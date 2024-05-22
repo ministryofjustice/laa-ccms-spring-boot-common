@@ -26,7 +26,9 @@ class LaaCcmsJavaGradlePlugin implements Plugin<Project> {
         target.pluginManager.apply CheckstylePlugin
         target.pluginManager.apply MavenPublishPlugin
 
-        target.rootProject.pluginManager.apply ReleasePlugin
+        if (!target.rootProject.pluginManager.hasPlugin('gradle-release')) {
+            target.rootProject.pluginManager.apply ReleasePlugin
+        }
 
         target.java {
             toolchain.languageVersion.set(JavaLanguageVersion.of(JAVA_VERSION))
