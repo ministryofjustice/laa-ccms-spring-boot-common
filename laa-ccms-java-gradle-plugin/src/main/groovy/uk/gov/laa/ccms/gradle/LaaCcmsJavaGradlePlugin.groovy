@@ -22,10 +22,11 @@ class LaaCcmsJavaGradlePlugin implements Plugin<Project> {
 
         target.pluginManager.apply JavaPlugin
         target.pluginManager.apply JacocoPlugin
-        target.pluginManager.apply ReleasePlugin
         target.pluginManager.apply VersionsPlugin
         target.pluginManager.apply CheckstylePlugin
         target.pluginManager.apply MavenPublishPlugin
+
+        target.rootProject.pluginManager.apply ReleasePlugin
 
         target.java {
             toolchain.languageVersion.set(JavaLanguageVersion.of(JAVA_VERSION))
