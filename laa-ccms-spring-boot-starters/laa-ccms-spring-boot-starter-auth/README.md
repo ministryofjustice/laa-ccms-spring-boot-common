@@ -70,3 +70,20 @@ laa.ccms.springboot.starter.auth:
   ]'
   unprotected-uris: [ "/actuator/**", "/resource1/unrestricted/**" ]
 ```
+
+## Behaviour
+
+Authentication of endpoints will behave as follows.
+
+### Unprotected URIs
+
+Unprotected URIs will not require any authentication. Authentication headers will be ignored.
+
+### Protected URIs
+
+If a client attempts to access a protected URI, they will receive one of 3 responses depending on the scenario:
+
+- Invalid or no access token present / wrong header used: 401 Unauthorized
+- Valid access token present, client's role **does not** permit access to the requested URI or the URI does not exist: 403 Forbidden
+- Valid access token present, client's role **does** permit access to the requested URI: 2XX (Success) / normal response
+
