@@ -63,7 +63,7 @@ public class ApiAuthenticationFilter extends GenericFilterBean {
 
             httpResponse.getWriter().write(objectMapper.writeValueAsString(errorResponse));
 
-            log.info("Request rejected for endpoint '{}': {}.", ((HttpServletRequest) request).getRequestURI(), message);
+            log.info("Request rejected for endpoint '{}': {}", ((HttpServletRequest) request).getRequestURI(), message);
         }
     }
 }
