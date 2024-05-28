@@ -70,11 +70,14 @@ public class ApiAuthenticationService {
      */
     protected Authentication getAuthentication(HttpServletRequest request) {
         String accessToken = request.getHeader(authenticationProperties.getAuthenticationHeader());
-        if (accessToken == null || !isAuthorizedAccessToken(accessToken)) {
-            throw new BadCredentialsException("Missing or invalid API access token");
+
+        if (accessToken == null) {
+            throw new MissingCredentialsException("No API access token provided.");
         }
 
-        Optional<ClientCredential> clientCredential = getMatchingClientCredential(accessToken);
+        if (!isAuthorizedAccessToken(accessToken)) {
+            throw new BadCredentialsException("Invalid API access token provided.");
+        }
 
         List<GrantedAuthority> grantedAuthorities = getClientRoles(accessToken)
                 .stream()
