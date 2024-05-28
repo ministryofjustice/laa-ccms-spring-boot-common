@@ -1,7 +1,7 @@
 # LAA CCMS SpringBoot Authentication Starter
 
 This starter will enable authentication on endpoints you have specified in your application configuration.
-Roles can be defined to categorise groups of endpoints under different level of access. These roles can then be assigned
+Roles can be defined to categorise groups of endpoints under different levels of access. These roles can then be assigned
 to clients.
 
 ## Usage

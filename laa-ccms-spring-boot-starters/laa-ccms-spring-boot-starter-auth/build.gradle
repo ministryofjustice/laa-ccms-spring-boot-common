@@ -23,6 +23,13 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 }
 
+publishing.publications {
+    library(MavenPublication) {
+        from components.java
+    }
+}
+
+
 test {
     useJUnitPlatform()
 }
