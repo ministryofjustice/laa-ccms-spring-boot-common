@@ -132,7 +132,10 @@ public class SecurityFilterChainAutoConfiguration {
             .sessionManagement(sessionManagement ->
                 sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-            .addFilterBefore(apiAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(apiAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            .exceptionHandling(exceptionHandling -> {
+                exceptionHandling.accessDeniedHandler(new ApiAccessDeniedHandler(objectMapper));
+            });
 
         return httpSecurity.build();
 
