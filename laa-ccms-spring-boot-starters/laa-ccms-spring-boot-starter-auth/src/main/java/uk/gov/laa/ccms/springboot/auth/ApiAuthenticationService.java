@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.InvalidPropertyException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -13,7 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,7 +25,8 @@ import java.util.stream.Collectors;
 /**
  * API authentication service responsible for determining the authentication outcome for a given client request.
  */
-@Service
+@Slf4j
+@Component
 @EnableConfigurationProperties(AuthenticationProperties.class)
 public class ApiAuthenticationService {
 
@@ -52,6 +54,10 @@ public class ApiAuthenticationService {
 
         if (clientCredentials.isEmpty()) throw new InvalidPropertyException(AuthenticationProperties.class,
                 "authorizedClients", "At least one authorized client must be provided.");
+
+        for (ClientCredential clientCredential : clientCredentials) {
+            log.info("Authorized Client Registered: '{}' Roles: {}", clientCredential.name(), clientCredential.roles().toString());
+        }
     }
 
     /**

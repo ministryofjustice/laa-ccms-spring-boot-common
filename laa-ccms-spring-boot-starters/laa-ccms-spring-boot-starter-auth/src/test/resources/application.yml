@@ -39,3 +39,7 @@ laa.ccms.springboot.starter.auth:
       }
   ]'
   unprotected-uris: [ "/actuator/**", "/resource1/unrestricted/**" ]
+
+logging:
+  level:
+    root: INFO

@@ -4,12 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.InvalidPropertyException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -25,10 +27,12 @@ import java.util.Set;
  * Configuration of security filter chains to determine authentication behavior per endpoint (group).
  * See <a href="https://docs.spring.io/spring-security/reference/servlet/configuration/java.html#jc-httpsecurity">HTTP Security Configuration</a>.
  */
+@Slf4j
 @AutoConfiguration
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
+@ComponentScan
 @EnableConfigurationProperties(AuthenticationProperties.class)
-public class SecurityFilterChainConfiguration {
+public class SecurityFilterChainAutoConfiguration {
 
     private final AuthenticationProperties authenticationProperties;
 
@@ -36,11 +40,15 @@ public class SecurityFilterChainConfiguration {
 
     private Set<AuthorizedRole> authorizedRoles;
 
+    private final ObjectMapper objectMapper;
+
     @Autowired
-    public SecurityFilterChainConfiguration(AuthenticationProperties authenticationProperties,
-                                            ApiAuthenticationService apiAuthenticationService) {
+    public SecurityFilterChainAutoConfiguration(AuthenticationProperties authenticationProperties,
+                                                ApiAuthenticationService apiAuthenticationService,
+                                                ObjectMapper objectMapper) {
         this.authenticationProperties = authenticationProperties;
         this.apiAuthenticationService = apiAuthenticationService;
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -59,6 +67,9 @@ public class SecurityFilterChainConfiguration {
         if (authorizedRoles.isEmpty()) throw new InvalidPropertyException(AuthenticationProperties.class,
                 "authorizedRoles", "At least one authorized role must be provided.");
 
+        for (AuthorizedRole authorizedRole : authorizedRoles) {
+            log.info("Authorized Role Registered: '{}'", authorizedRole.name());
+        }
     }
 
 
@@ -111,7 +122,8 @@ public class SecurityFilterChainConfiguration {
                     }
                 );
 
-        ApiAuthenticationFilter apiAuthenticationFilter = new ApiAuthenticationFilter(apiAuthenticationService);
+        ApiAuthenticationFilter apiAuthenticationFilter = new ApiAuthenticationFilter(apiAuthenticationService,
+                objectMapper);
 
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
             .formLogin(AbstractHttpConfigurer::disable)
