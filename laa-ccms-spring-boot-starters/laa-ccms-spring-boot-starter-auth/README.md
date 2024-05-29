@@ -87,3 +87,83 @@ If a client attempts to access a protected URI, they will receive one of 3 respo
 - Valid access token present, client's role **does not** permit access to the requested URI or the URI does not exist: 403 Forbidden
 - Valid access token present, client's role **does** permit access to the requested URI: 2XX (Success) / normal response
 
+```mermaid
+graph
+    
+    subgraph key["Key"]
+        green["Spring Security"]
+        blue["Auth Starter"]
+    end
+    
+    client["Client"]
+    
+    subgraph api["API"]
+    
+        subgraph filterChain["Filter Chain"]
+            authenticationFilter["API Authentication Filter"]
+            authorizationFilter["Authorization Filter"]
+        end
+
+        authenticationCheck{"Client<br>Authenticated?"}
+        
+        authenticationService["API Authentication Service"]
+        
+        authorizationM["Authorization Manager"]
+        
+        rmdAuthorizationM["RequestMatcherDelegatingAuthorizationManager"]
+        
+        authorityAuthorizationM["Authority Authorization Manager"]
+        
+        authorizationCheck{"Client<br>Authorized?"}
+        
+        accessDeniedHandler["Access Denied Handler"]
+    
+        subgraph securityContext["Security Context"]
+            creds["Credentials"]
+        end
+        
+        businessLogic["Business Logic"]
+        
+    end
+    
+    client -- 1. Request (protected endpoint) --> authenticationFilter
+
+    authenticationFilter -- 2. Create authentication token --> authenticationService
+    
+    authenticationFilter -- 3. check authentication --> authenticationCheck
+
+    authenticationCheck -- 4a. Yes - Store authentication token --> creds
+    
+    authenticationCheck -- 4b. No - 401 Unauthorized --> client
+    
+    authenticationFilter -- 5. doFilter --> authorizationFilter
+
+    authorizationFilter -- 6. Get authentication token --> creds
+
+    authorizationFilter -- 7. Check authorization --> authorizationM
+    
+    authorizationM --> rmdAuthorizationM
+
+    rmdAuthorizationM -- 8. Identify matching request mapping--> rmdAuthorizationM
+
+    rmdAuthorizationM --> authorityAuthorizationM
+
+    authorityAuthorizationM -- 9. Compare client's role<br>against role required<br>for endpoint --> authorityAuthorizationM
+    
+    authorityAuthorizationM --> authorizationCheck
+    
+    authorizationCheck -- 10a. No --> accessDeniedHandler
+    accessDeniedHandler -- 11a. 403 Forbidden --> client
+
+    authorizationCheck -- 10b. yes --> businessLogic
+    businessLogic -- 11b. Normal response --> client
+
+
+    classDef green fill:#206020,stroke:#333,stroke-width:2px;
+    classDef blue fill:#002db3,stroke:#333,stroke-width:2px;
+    class green,authorizationFilter,authM,authP,providerM,securityContext,creds,authorizationM,rmdAuthorizationM,authorizationCheck,authorityAuthorizationM green
+    class blue,authenticationFilter,authenticationService,accessDeniedHandler,authenticationCheck blue
+
+```
+
+
