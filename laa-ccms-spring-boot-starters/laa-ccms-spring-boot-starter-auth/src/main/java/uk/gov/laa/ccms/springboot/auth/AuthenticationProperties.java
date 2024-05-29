@@ -21,14 +21,16 @@ public class AuthenticationProperties {
 
     /**
      * The list of clients who are authorized to access the API, and their roles
-     * JSON formatted string, with the top level being a list and each contained item representing a {@link ClientCredential}.
+     * JSON formatted string, with the top level being a list and each contained item
+     * representing a {@link ClientCredential}.
      */
     @NotNull(message = "authorizedClients is required")
     private String authorizedClients;
 
     /**
      * The list of roles that can be used to access the API, and the URIs they enable access to.
-     * JSON formatted string, with the top level being a list and each contained item representing an {@link AuthorizedRole}.
+     * JSON formatted string, with the top level being a list and each contained item representing
+     * an {@link AuthorizedRole}.
      */
     @NotNull(message = "authorizedRoles is required")
     private String authorizedRoles;

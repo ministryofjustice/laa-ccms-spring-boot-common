@@ -14,7 +14,8 @@ public class ApiAuthenticationToken extends AbstractAuthenticationToken {
     private final String clientName;
     private final String accessToken;
 
-    public ApiAuthenticationToken(String clientName, String accessToken, Collection<? extends GrantedAuthority> authorities) {
+    public ApiAuthenticationToken(String clientName, String accessToken,
+                                  Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
         this.clientName = clientName;
         this.accessToken = accessToken;

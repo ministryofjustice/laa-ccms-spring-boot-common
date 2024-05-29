@@ -48,7 +48,8 @@ public class ApiAuthenticationFilter extends GenericFilterBean {
         try {
             Authentication authentication = authenticationService.getAuthentication((HttpServletRequest) request);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            log.info("Endpoint '{}' accessed by {}.", ((HttpServletRequest) request).getRequestURI(), authentication.getPrincipal().toString());
+            log.info("Endpoint '{} {}' requested by {}.", ((HttpServletRequest) request).getMethod(),
+                    ((HttpServletRequest) request).getRequestURI(), authentication.getPrincipal().toString());
             filterChain.doFilter(request, response);
         } catch (Exception ex) {
             int code = HttpServletResponse.SC_UNAUTHORIZED;
@@ -63,7 +64,8 @@ public class ApiAuthenticationFilter extends GenericFilterBean {
 
             httpResponse.getWriter().write(objectMapper.writeValueAsString(errorResponse));
 
-            log.info("Request rejected for endpoint '{}': {}", ((HttpServletRequest) request).getRequestURI(), message);
+            log.info("Request rejected for endpoint '{} {}': {}", ((HttpServletRequest) request).getMethod(),
+                    ((HttpServletRequest) request).getRequestURI(), message);
         }
     }
 }

@@ -26,7 +26,8 @@ public class ApiAccessDeniedHandler implements AccessDeniedHandler {
     }
 
     @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+    public void handle(HttpServletRequest request, HttpServletResponse response,
+                       AccessDeniedException accessDeniedException) throws IOException, ServletException {
         int code = HttpServletResponse.SC_FORBIDDEN;
         response.setStatus(code);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -38,7 +39,7 @@ public class ApiAccessDeniedHandler implements AccessDeniedHandler {
 
         response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
 
-        log.info("Request rejected for endpoint '{}': {}", request.getRequestURI(), message);
+        log.info("Request rejected for endpoint '{} {}': {}", request.getMethod(), request.getRequestURI(), message);
     }
 
 }
