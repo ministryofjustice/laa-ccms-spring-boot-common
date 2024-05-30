@@ -33,7 +33,7 @@ public class ApiAuthenticationFilter extends GenericFilterBean {
     }
 
     /**
-     * Filter reponsible for authenticating the client the made the request. Successful authentication results in the
+     * Filter reponsible for authenticating the client which made the request. Successful authentication results in the
      * authentication details being stored in the security context for further processing, and continuation of the
      * filter chain. Unsuccessful authentication results in a 401 UNAUTHORIZED response.
      *
