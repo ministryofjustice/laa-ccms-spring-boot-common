@@ -94,39 +94,35 @@ graph
         green["Spring Security"]
         blue["Auth Starter"]
     end
-    
+
     client["Client"]
     
     subgraph api["API"]
-    
+
         subgraph filterChain["Filter Chain"]
             authenticationFilter["API Authentication Filter"]
             authorizationFilter["Authorization Filter"]
         end
-
-        authenticationCheck{"Client<br>Authenticated?"}
         
         authenticationService["API Authentication Service"]
         
         authorizationM["Authorization Manager"]
-        
         rmdAuthorizationM["RequestMatcherDelegatingAuthorizationManager"]
-        
         authorityAuthorizationM["Authority Authorization Manager"]
         
         authorizationCheck{"Client<br>Authorized?"}
-        
         accessDeniedHandler["Access Denied Handler"]
-    
+        businessLogic["Business Logic"]
+
         subgraph securityContext["Security Context"]
             creds["Credentials"]
         end
-        
-        businessLogic["Business Logic"]
+
+        authenticationCheck{"Client<br>Authenticated?"}
         
     end
     
-    client -- 1. Request (protected endpoint) --> authenticationFilter
+    client -- <span style='color:black;font-weight:bold;font-size:25px' style=''>START</span><br>1. Request (protected endpoint) --> authenticationFilter
 
     authenticationFilter -- 2. Create authentication token --> authenticationService
     
@@ -155,7 +151,7 @@ graph
     authorizationCheck -- 10a. No --> accessDeniedHandler
     accessDeniedHandler -- 11a. 403 Forbidden --> client
 
-    authorizationCheck -- 10b. yes --> businessLogic
+    authorizationCheck -- 10b. Yes --> businessLogic
     businessLogic -- 11b. Normal response --> client
 
 
@@ -163,6 +159,11 @@ graph
     classDef blue fill:#002db3,stroke:#333,stroke-width:2px;
     class green,authorizationFilter,authM,authP,providerM,securityContext,creds,authorizationM,rmdAuthorizationM,authorizationCheck,authorityAuthorizationM green
     class blue,authenticationFilter,authenticationService,accessDeniedHandler,authenticationCheck blue
+    linkStyle 0 stroke-width:3px,stroke:black,color:black
+    
+    linkStyle 4 stroke:red,color:red
+    linkStyle 14 stroke:red,color:red
+    linkStyle 16 stroke:green,color:green
 
 ```
 
