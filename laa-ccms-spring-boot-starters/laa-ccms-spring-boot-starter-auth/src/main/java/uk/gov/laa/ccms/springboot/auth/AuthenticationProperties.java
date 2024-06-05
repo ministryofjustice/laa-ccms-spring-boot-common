@@ -1,6 +1,6 @@
 package uk.gov.laa.ccms.springboot.auth;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -16,7 +16,7 @@ public class AuthenticationProperties {
     /**
      * The name of the HTTP header used to store the API access token.
      */
-    @NotNull(message = "authenticationHeader is required")
+    @NotBlank(message = "authenticationHeader is required")
     private String authenticationHeader;
 
     /**
@@ -24,7 +24,7 @@ public class AuthenticationProperties {
      * JSON formatted string, with the top level being a list and each contained item
      * representing a {@link ClientCredential}.
      */
-    @NotNull(message = "authorizedClients is required")
+    @NotBlank(message = "authorizedClients is required")
     private String authorizedClients;
 
     /**
@@ -32,13 +32,13 @@ public class AuthenticationProperties {
      * JSON formatted string, with the top level being a list and each contained item representing
      * an {@link AuthorizedRole}.
      */
-    @NotNull(message = "authorizedRoles is required")
+    @NotBlank(message = "authorizedRoles is required")
     private String authorizedRoles;
 
     /**
      * The list of URIs which do not require any authentication.
      */
-    @NotNull(message = "unprotectedURIs is required")
+    @NotBlank(message = "unprotectedURIs is required")
     private String[] unprotectedURIs;
 
 }

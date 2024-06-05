@@ -11,6 +11,8 @@ dependencies {
         transitive = false
     }
 
+    implementation 'io.swagger.core.v3:swagger-models:2.2.22'
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
     implementation 'jakarta.servlet:jakarta.servlet-api'
@@ -21,6 +23,8 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    testImplementation 'org.assertj:assertj-core:3.4.1'
 }
 
 publishing.publications {

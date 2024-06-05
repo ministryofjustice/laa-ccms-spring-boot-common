@@ -2,6 +2,7 @@ package uk.gov.laa.ccms.springboot.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -41,17 +43,18 @@ public class ApiAuthenticationFilter extends GenericFilterBean {
      * @param response the http response object
      * @param filterChain the current filter chain
      * @throws IOException -
+     * @throws ServletException -
      */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
-            throws IOException {
+            throws IOException, ServletException {
         try {
             Authentication authentication = authenticationService.getAuthentication((HttpServletRequest) request);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             log.info("Endpoint '{} {}' requested by {}.", ((HttpServletRequest) request).getMethod(),
                     ((HttpServletRequest) request).getRequestURI(), authentication.getPrincipal().toString());
             filterChain.doFilter(request, response);
-        } catch (Exception ex) {
+        } catch (AuthenticationException ex) {
             int code = HttpServletResponse.SC_UNAUTHORIZED;
             HttpServletResponse httpResponse = (HttpServletResponse) response;
             httpResponse.setStatus(code);
