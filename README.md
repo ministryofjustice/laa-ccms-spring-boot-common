@@ -96,6 +96,6 @@ apply plugin: 'uk.gov.laa.ccms.springboot.laa-ccms-spring-boot-gradle-plugin'
 
 ## Available Starters
 
+- [Authentication](laa-ccms-spring-boot-starters/laa-ccms-spring-boot-starter-auth/README.md)
 - _**[TODO]**_ Exception Handling
 - _**[TODO]**_ Entity Converters
-- _**[TODO]**_ Auth
