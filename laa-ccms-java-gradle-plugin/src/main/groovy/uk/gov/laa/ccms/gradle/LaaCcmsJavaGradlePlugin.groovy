@@ -15,7 +15,7 @@ import org.gradle.testing.jacoco.plugins.JacocoPlugin
 class LaaCcmsJavaGradlePlugin implements Plugin<Project> {
 
     private static final String JAVA_VERSION = "21"
-    private static final String CHECKSTYLE_VERSION = "10.17.0"
+    private static final String CHECKSTYLE_VERSION = "10.18.1"
 
     @Override
     void apply(Project target) {
@@ -32,12 +32,6 @@ class LaaCcmsJavaGradlePlugin implements Plugin<Project> {
         }
 
         /** Test Tasks **/
-
-        // Additional logging
-        target.tasks.withType(Test).configureEach {
-            testLogging.showStandardStreams = true
-            testLogging.showStackTraces = true
-        }
 
         // Integration tests
         if (target.tasks.findByName('integrationTest') == null) {
