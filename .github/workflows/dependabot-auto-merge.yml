@@ -2,7 +2,7 @@ name: Dependabot auto-merge test
 
 on:
   pull_request:
-    branches: [ dependabot/auto-merge-feature* ]
+    branches: [ dependabot/auto-merge-base ]
 
 permissions:
   contents: write
