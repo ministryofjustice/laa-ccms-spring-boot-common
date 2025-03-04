@@ -71,7 +71,7 @@ public class ButtonElementTagProcessor extends AbstractElementTagProcessor {
       buttonAttributes.append(" data-prevent-double-click=\"")
           .append(attributes.get("preventDoubleClick")).append("\"");
     }
-    if (attributes.containsKey("value")){
+    if (attributes.containsKey("value")) {
       buttonAttributes.append(" value=\"").append(attributes.get("value")).append("\"");
     }
     return buttonAttributes.toString();
