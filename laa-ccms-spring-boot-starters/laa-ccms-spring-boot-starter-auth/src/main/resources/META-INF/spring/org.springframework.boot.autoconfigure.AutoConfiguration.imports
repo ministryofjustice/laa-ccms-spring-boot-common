@@ -1,2 +1,1 @@
 uk.gov.laa.ccms.springboot.auth.SecurityFilterChainAutoConfiguration
--!org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
