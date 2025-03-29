@@ -1,12 +1,16 @@
 package uk.gov.laa.ccms.springboot.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Collections;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -37,16 +41,16 @@ public class SecurityFilterChainAutoConfiguration {
   }
 
   @Bean
-  public ApiAccessDeniedHandler apiAccessDeniedHandler(ObjectMapper objectMapper) {
-    return new ApiAccessDeniedHandler(objectMapper);
+  public AuthenticationManager authenticationManager(AuthenticationProvider provider) {
+    return new ProviderManager(Collections.singletonList(provider));
   }
 
   @Bean
   public ApiAuthenticationFilter apiAuthenticationFilter(
-      ApiAuthenticationProvider authenticationProvider,
+      AuthenticationManager authenticationManager,
       TokenDetailsManager tokenDetailsManager,
       ObjectMapper objectMapper) {
-    return new ApiAuthenticationFilter(authenticationProvider, objectMapper, tokenDetailsManager);
+    return new ApiAuthenticationFilter(authenticationManager, objectMapper, tokenDetailsManager);
   }
 
 
@@ -62,7 +66,7 @@ public class SecurityFilterChainAutoConfiguration {
   public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity,
                                                  TokenDetailsManager tokenDetailsManager,
                                                  ApiAuthenticationFilter apiAuthenticationFilter,
-                                                 ApiAccessDeniedHandler accessDeniedHandler)
+                                                 ObjectMapper objectMapper)
       throws Exception {
 
     httpSecurity
@@ -86,7 +90,7 @@ public class SecurityFilterChainAutoConfiguration {
         })
         .addFilterBefore(apiAuthenticationFilter, BasicAuthenticationFilter.class)
         .exceptionHandling(exceptionHandling ->
-            exceptionHandling.accessDeniedHandler(accessDeniedHandler));
+            exceptionHandling.accessDeniedHandler(new ApiAccessDeniedHandler(objectMapper)));
 
     return httpSecurity.build();
   }

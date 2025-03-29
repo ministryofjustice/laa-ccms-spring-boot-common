@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContext;
@@ -23,16 +24,16 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Slf4j
 public class ApiAuthenticationFilter extends OncePerRequestFilter {
 
-  private final ApiAuthenticationProvider authenticationProvider;
+  private final AuthenticationManager authenticationManager;
 
   private final ObjectMapper objectMapper;
 
   private final TokenDetailsManager tokenDetailsManager;
 
   protected ApiAuthenticationFilter(
-      ApiAuthenticationProvider authenticationProvider, ObjectMapper objectMapper,
+      AuthenticationManager authenticationManager, ObjectMapper objectMapper,
       TokenDetailsManager tokenDetailsManager) {
-    this.authenticationProvider = authenticationProvider;
+    this.authenticationManager = authenticationManager;
     this.objectMapper = objectMapper;
     this.tokenDetailsManager = tokenDetailsManager;
   }
@@ -56,7 +57,7 @@ public class ApiAuthenticationFilter extends OncePerRequestFilter {
     try {
       String accessToken = request.getHeader(tokenDetailsManager.getAuthenticationHeader());
       ApiAuthenticationToken apiAuthenticationToken = new ApiAuthenticationToken(accessToken);
-      Authentication authentication = authenticationProvider.authenticate(apiAuthenticationToken);
+      Authentication authentication = authenticationManager.authenticate(apiAuthenticationToken);
       SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
       securityContext.setAuthentication(authentication);
       SecurityContextHolder.setContext(securityContext);
