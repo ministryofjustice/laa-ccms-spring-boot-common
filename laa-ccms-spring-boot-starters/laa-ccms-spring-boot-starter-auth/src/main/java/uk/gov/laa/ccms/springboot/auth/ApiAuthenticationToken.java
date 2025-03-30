@@ -20,9 +20,10 @@ public class ApiAuthenticationToken extends AbstractAuthenticationToken {
    *
    * @param accessToken the access token provided by the client.
    */
-  public ApiAuthenticationToken(String accessToken) {
+  private ApiAuthenticationToken(String accessToken) {
     super(Collections.emptyList());
     this.accessToken = accessToken;
+    super.setAuthenticated(false);
   }
 
   /**
@@ -34,12 +35,22 @@ public class ApiAuthenticationToken extends AbstractAuthenticationToken {
    * @param accessToken the access token provided by the client.
    * @param authorities the roles associated with the client.
    */
-  public ApiAuthenticationToken(
+  private ApiAuthenticationToken(
       String clientName, String accessToken, Collection<? extends GrantedAuthority> authorities) {
     super(authorities);
     this.clientName = clientName;
     this.accessToken = accessToken;
     super.setAuthenticated(true);
+  }
+
+
+  public static ApiAuthenticationToken authenticated(
+      String clientName, String accessToken, Collection<? extends GrantedAuthority> authorities) {
+    return new ApiAuthenticationToken(clientName, accessToken, authorities);
+  }
+
+  public static ApiAuthenticationToken unauthenticated(String accessToken) {
+    return new ApiAuthenticationToken(accessToken);
   }
 
   @Override

@@ -56,8 +56,8 @@ public class ApiAuthenticationFilter extends OncePerRequestFilter {
 
     try {
       String accessToken = request.getHeader(tokenDetailsManager.getAuthenticationHeader());
-      ApiAuthenticationToken apiAuthenticationToken = new ApiAuthenticationToken(accessToken);
-      Authentication authentication = authenticationManager.authenticate(apiAuthenticationToken);
+      ApiAuthenticationToken authRequest = ApiAuthenticationToken.unauthenticated(accessToken);
+      Authentication authentication = authenticationManager.authenticate(authRequest);
       SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
       securityContext.setAuthentication(authentication);
       SecurityContextHolder.setContext(securityContext);
@@ -76,9 +76,8 @@ public class ApiAuthenticationFilter extends OncePerRequestFilter {
 
       ErrorResponse errorResponse = new ErrorResponse(code, status, message);
       response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
-      log.info(
-          "Request rejected for endpoint '{} {}': {}", request.getMethod(), request.getRequestURI(),
-          message);
+      log.info("Request rejected for endpoint '{} {}': {}", request.getMethod(),
+          request.getRequestURI(), message);
     }
 
   }

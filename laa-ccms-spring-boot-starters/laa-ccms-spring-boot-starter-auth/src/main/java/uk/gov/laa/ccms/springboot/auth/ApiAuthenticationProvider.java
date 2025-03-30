@@ -53,7 +53,8 @@ public class ApiAuthenticationProvider implements AuthenticationProvider {
       grantedAuthorities = AuthorityUtils.NO_AUTHORITIES;
     }
 
-    return new ApiAuthenticationToken(apiAuthenticationContextHolder.getPrincipal(accessToken),
+    return ApiAuthenticationToken.authenticated(
+        apiAuthenticationContextHolder.getPrincipal(accessToken),
         accessToken, grantedAuthorities);
   }
 

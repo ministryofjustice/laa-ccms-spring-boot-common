@@ -1,21 +1,17 @@
 package uk.gov.laa.ccms.springboot.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Collections;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 /**
  * Configuration of security filter chains to determine authentication behavior per endpoint
@@ -34,26 +30,6 @@ public class SecurityFilterChainAutoConfiguration {
     return new TokenDetailsManager(properties);
   }
 
-  @Bean
-  public ApiAuthenticationProvider apiAuthenticationProvider(
-      TokenDetailsManager tokenDetailsManager) {
-    return new ApiAuthenticationProvider(tokenDetailsManager);
-  }
-
-  @Bean
-  public AuthenticationManager authenticationManager(AuthenticationProvider provider) {
-    return new ProviderManager(Collections.singletonList(provider));
-  }
-
-  @Bean
-  public ApiAuthenticationFilter apiAuthenticationFilter(
-      AuthenticationManager authenticationManager,
-      TokenDetailsManager tokenDetailsManager,
-      ObjectMapper objectMapper) {
-    return new ApiAuthenticationFilter(authenticationManager, objectMapper, tokenDetailsManager);
-  }
-
-
   /**
    * First security filter chain to allow requests to unprotected URLs regardless of whether
    * authentication credentials have been provided.
@@ -65,7 +41,6 @@ public class SecurityFilterChainAutoConfiguration {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity,
                                                  TokenDetailsManager tokenDetailsManager,
-                                                 ApiAuthenticationFilter apiAuthenticationFilter,
                                                  ObjectMapper objectMapper)
       throws Exception {
 
@@ -88,7 +63,8 @@ public class SecurityFilterChainAutoConfiguration {
           // Deny all other requests not matching the above rules
           auth.anyRequest().denyAll();
         })
-        .addFilterBefore(apiAuthenticationFilter, BasicAuthenticationFilter.class)
+        .with(new ApiTokenConfigurer(objectMapper, tokenDetailsManager), Customizer.withDefaults())
+        .authenticationProvider(new ApiAuthenticationProvider(tokenDetailsManager))
         .exceptionHandling(exceptionHandling ->
             exceptionHandling.accessDeniedHandler(new ApiAccessDeniedHandler(objectMapper)));
 
