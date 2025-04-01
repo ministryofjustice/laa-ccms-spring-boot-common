@@ -30,6 +30,12 @@ public class SecurityFilterChainAutoConfiguration {
     return new TokenDetailsManager(properties);
   }
 
+  @Bean
+  public ApiAuthenticationProvider apiAuthenticationProvider(
+      TokenDetailsManager tokenDetailsManager) {
+    return new ApiAuthenticationProvider(tokenDetailsManager);
+  }
+
   /**
    * First security filter chain to allow requests to unprotected URLs regardless of whether
    * authentication credentials have been provided.
@@ -41,7 +47,8 @@ public class SecurityFilterChainAutoConfiguration {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity,
                                                  TokenDetailsManager tokenDetailsManager,
-                                                 ObjectMapper objectMapper)
+                                                 ObjectMapper objectMapper,
+                                                 ApiAuthenticationProvider authenticationProvider)
       throws Exception {
 
     httpSecurity
@@ -64,7 +71,7 @@ public class SecurityFilterChainAutoConfiguration {
           auth.anyRequest().denyAll();
         })
         .with(new ApiTokenConfigurer(objectMapper, tokenDetailsManager), Customizer.withDefaults())
-        .authenticationProvider(new ApiAuthenticationProvider(tokenDetailsManager))
+        .authenticationProvider(authenticationProvider)
         .exceptionHandling(exceptionHandling ->
             exceptionHandling.accessDeniedHandler(new ApiAccessDeniedHandler(objectMapper)));
 

@@ -22,11 +22,6 @@ public class ApiTokenConfigurer extends AbstractHttpConfigurer<ApiTokenConfigure
   }
 
   @Override
-  public void init(HttpSecurity http) {
-    http.authenticationProvider(new ApiAuthenticationProvider(tokenDetailsManager));
-  }
-
-  @Override
   public void configure(HttpSecurity http) {
     var authManager = http.getSharedObject(AuthenticationManager.class);
     var filter =
