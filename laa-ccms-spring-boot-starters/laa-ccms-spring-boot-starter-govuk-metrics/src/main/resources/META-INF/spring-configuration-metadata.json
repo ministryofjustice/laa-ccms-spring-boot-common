@@ -1,0 +1,126 @@
+{
+  "properties": [
+    {
+      "name": "laa.ccms.metrics.health-exposed",
+      "type": "java.lang.Boolean",
+      "defaultValue": true,
+      "description": "Whether the `/actuator/health` endpoint is exposed.",
+      "sourceType": "uk.gov.laa.ccms.springboot.metrics.config.MetricsStarterProperties"
+    },
+    {
+      "name": "laa.ccms.metrics.info-exposed",
+      "type": "java.lang.Boolean",
+      "defaultValue": true,
+      "description": "Whether the `/actuator/info` endpoint is exposed.",
+      "sourceType": "uk.gov.laa.ccms.springboot.metrics.config.MetricsStarterProperties"
+    },
+    {
+      "name": "laa.ccms.metrics.metrics-exposed",
+      "type": "java.lang.Boolean",
+      "defaultValue": true,
+      "description": "Whether the `/actuator/metrics` endpoint is exposed.",
+      "sourceType": "uk.gov.laa.ccms.springboot.metrics.config.MetricsStarterProperties"
+    },
+    {
+      "name": "laa.ccms.metrics.prometheus-exposed",
+      "type": "java.lang.Boolean",
+      "defaultValue": true,
+      "description": "Whether the `/actuator/prometheus` endpoint is exposed.",
+      "sourceType": "uk.gov.laa.ccms.springboot.metrics.config.MetricsStarterProperties"
+    },
+    {
+      "name": "laa.ccms.metrics.mappings-exposed",
+      "type": "java.lang.Boolean",
+      "defaultValue": false,
+      "description": "Whether the `/actuator/mappings` endpoint is exposed. Recommended to keep this endpoint hidden in production.",
+      "sourceType": "uk.gov.laa.ccms.springboot.metrics.config.MetricsStarterProperties"
+    },
+    {
+      "name": "laa.ccms.metrics.env-exposed",
+      "type": "java.lang.Boolean",
+      "defaultValue": false,
+      "description": "Whether the `/actuator/env` endpoint is exposed. Recommended to keep this endpoint hidden in production.",
+      "sourceType": "uk.gov.laa.ccms.springboot.metrics.config.MetricsStarterProperties"
+    }
+  ],
+  "hints": [
+    {
+      "name": "laa.ccms.metrics.health-exposed",
+      "values": [
+        {
+          "value": "true",
+          "description": "Exposes the endpoint."
+        },
+        {
+          "value": "false",
+          "description": "Does not the endpoint."
+        }
+      ]
+    },
+    {
+      "name": "laa.ccms.metrics.info-exposed",
+      "values": [
+        {
+          "value": "true",
+          "description": "Exposes the endpoint."
+        },
+        {
+          "value": "false",
+          "description": "Does not the endpoint."
+        }
+      ]
+    },
+    {
+      "name": "laa.ccms.metrics.metrics-exposed",
+      "values": [
+        {
+          "value": "true",
+          "description": "Exposes the endpoint."
+        },
+        {
+          "value": "false",
+          "description": "Does not the endpoint."
+        }
+      ]
+    },
+    {
+      "name": "laa.ccms.metrics.prometheus-exposed",
+      "values": [
+        {
+          "value": "true",
+          "description": "Exposes the endpoint."
+        },
+        {
+          "value": "false",
+          "description": "Does not the endpoint."
+        }
+      ]
+    },
+    {
+      "name": "laa.ccms.metrics.mappings-exposed",
+      "values": [
+        {
+          "value": "true",
+          "description": "Exposes the endpoint."
+        },
+        {
+          "value": "false",
+          "description": "Does not the endpoint."
+        }
+      ]
+    },
+    {
+      "name": "laa.ccms.metrics.env-exposed",
+      "values": [
+        {
+          "value": "true",
+          "description": "Exposes the endpoint."
+        },
+        {
+          "value": "false",
+          "description": "Does not the endpoint."
+        }
+      ]
+    }
+  ]
+}
