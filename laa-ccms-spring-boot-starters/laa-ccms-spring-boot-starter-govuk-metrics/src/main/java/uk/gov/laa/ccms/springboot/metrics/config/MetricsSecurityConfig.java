@@ -55,8 +55,6 @@ public class MetricsSecurityConfig {
             session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         // Allows access without authentication
         .anonymous(Customizer.withDefaults())
-        // Disable CSRF so non-browser clients can access actuator endpoints.
-        .csrf(AbstractHttpConfigurer::disable)
         .build();
   }
 
