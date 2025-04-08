@@ -1,5 +1,7 @@
 package uk.gov.laa.ccms.springboot.metrics.config;
 
+import java.util.Set;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties.Exposure;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -24,6 +26,7 @@ import org.springframework.security.web.SecurityFilterChain;
  * @author Jamie Briggs
  */
 @AutoConfiguration
+@Slf4j
 // Only load configuration if actuator Endpoint class is present
 @ConditionalOnClass(Endpoint.class)
 @EnableConfigurationProperties(MetricsStarterProperties.class)
@@ -44,6 +47,7 @@ public class MetricsSecurityConfig {
   // Ensure that this security filter applies first
   @Order(1)
   SecurityFilterChain actuatorSecurity(HttpSecurity http) throws Exception {
+    log.info("Adding /actuator/** security filter chain");
     return http
         .securityMatcher("/actuator/**")
         .authorizeHttpRequests(
@@ -74,7 +78,9 @@ public class MetricsSecurityConfig {
 
     // Programmatically include specific actuator endpoints
     Exposure exposure = new Exposure();
-    exposure.setInclude(metricsStarterProperties.getIncludes());
+    Set<String> includes = metricsStarterProperties.getIncludes();
+    log.info("Including actuator endpoints: {}", includes);
+    exposure.setInclude(includes);
 
     properties.getExposure().setInclude(exposure.getInclude());
     return properties;
