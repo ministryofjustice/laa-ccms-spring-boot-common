@@ -62,7 +62,7 @@ subprojects {
     }
 }
 
-task updateSnapshotVersion {
+tasks.register('updateSnapshotVersion') {
     doLast {
         def gitHash = "git rev-parse --short HEAD".execute().text.trim()
         def propertiesFile = file('gradle.properties')
