@@ -1,3 +1,6 @@
+> [!WARNING]  
+> This repository is no longer maintained, and has been moved to https://github.com/ministryofjustice/laa-spring-boot-common. Please use this instead.
+
 # LAA CCMS Spring Boot Common
 
 Provides 2 plugins that configure plugins and apply common build logic,
